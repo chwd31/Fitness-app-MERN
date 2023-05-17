@@ -19,20 +19,31 @@ const ExercisePage = () => {
         setExerciseDate(event.target.value);
     };
 
-    const handleSaveExercise = (event) => {
+    const handleSaveExercise = async (event) => {
         event.preventDefault();
-        alert(`Exercise Type: ${exerciseType} Exercise Time: ${exerciseTime} Exercise Date: ${exerciseDate}`);
-        setExerciseDate(currentDate.toISOString());
 
-        console.log('Exercise Type: ', exerciseType);
-        console.log('Exercise Time: ', exerciseTime);
-        console.log('Exercise Date: ', exerciseDate);
+        try {
+            const response = await fetch('/api/exercise', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ exerciseType, exerciseTime, exerciseDate }),
+            });
 
-        setExerciseType('');
-        setExerciseTime('');
+            if (response.ok) {
+                alert('Exercise Saved!');
+                setExerciseType('');
+                setExerciseTime('');
+                setExerciseDate('');
+            } else {
+                console.log('Error occurred saving exercise', response.status);
+            }
+        } catch (error) {
+            console.log('Error occurred saving exercise', error);
+        }
     };
 
-    
     return (
         <div>
             <h1>Exercise Log</h1>   
