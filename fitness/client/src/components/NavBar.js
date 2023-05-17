@@ -1,10 +1,10 @@
-import { on } from 'mysql2/typings/mysql/lib/Connection';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
 const NavBar = ({ isLoggedIn, handleLogout }) => {
     const handleLogout = () => {
-        onLogout();
+        // Clear token from local storage or cookies
+        handleLogout();
     };
 
     return (
@@ -13,7 +13,7 @@ const NavBar = ({ isLoggedIn, handleLogout }) => {
             {isLoggedIn ? (
                 <>
                     <Link to="/exercise">Exercise</Link>
-                    <Link to="/profile">Profile</Link>  
+                    <Link to="/profile">Profile</Link>
                     <Link to="/weeklystats">Weekly Stats</Link>
                     <button onClick={handleLogout}>Logout</button>
                 </>
@@ -28,5 +28,3 @@ const NavBar = ({ isLoggedIn, handleLogout }) => {
 };
 
 export default NavBar;
-
-                 
