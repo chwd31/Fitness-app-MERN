@@ -7,6 +7,22 @@ const ProfilePage = () => {
     const [weight, setWeight] = useState('');
     const [isEditing, setIsEditing] = useState(false);
 
+    useEffect(() => {
+        // Fetch the user's profile data from the API
+        fetch('/api/profile')
+          .then((response) => response.json())
+          .then((data) => {
+            const { name, age, height, weight } = data;
+            setName(name);
+            setAge(age);
+            setHeight(height);
+            setWeight(weight);
+          })
+          .catch((error) => {
+            console.error('Error occurred while fetching profile data:', error);
+          });
+      }, []);
+
     const handleNameChange = (event) => {
         setName(event.target.value);
     };
