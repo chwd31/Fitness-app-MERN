@@ -12,7 +12,6 @@ const typeDefs = gql`
     type Exercise {
         _id: ID
         name: String
-        type: String
         weight: Int
         sets: Int
         reps: Int
