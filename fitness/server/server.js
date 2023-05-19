@@ -4,10 +4,10 @@ const path = require("path");
 const db = require("./config/connection");
 const { typeDefs, resolvers } = require("./schemas");
 // const { authMiddleware } = require("./utils/auth");
-const userRoutes = require("./routes/users");
-const profileRoutes = require("./routes/profile");
-const exerciseRoutes = require("./routes/exercise");
-const weeklyStatsRoutes = require("./routes/weeklyStats");
+// const userRoutes = require("./routes/users");
+// const profileRoutes = require("./routes/profile");
+// const exerciseRoutes = require("./routes/exercise");
+// const weeklyStatsRoutes = require("./routes/weeklyStats");
 
 
 const app = express();
