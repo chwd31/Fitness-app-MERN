@@ -1,45 +1,69 @@
-const db = require("../config/connection");
-const { User, Exercise } = require("../models");
+const db = require('../config/connection');
+const { User, Exercise } = require('../models');
 
-db.once("open", async () => {
+db.once('open', async () => {
   try {
     await Exercise.deleteMany({});
     await User.deleteMany({});
 
-    const user = await User.create({
-      username: "test",
-      password: "test",
-    });
+    const users = await User.create([
+      {
+        username: 'JohnDoe',
+        password: 'password1',
+        email: 'johndoe@example.com',
+      },
+      {
+        username: 'JaneSmith',
+        password: 'password2',
+        email: 'janesmith@example.com',
+      },
+      {
+        username: 'MikeJohnson',
+        password: 'password3',
+        email: 'mikejohnson@example.com',
+      },
+    ]);
 
-    console.log("User seeded");
+    console.log('Users seeded');
 
-    await Exercise.create({
-      name: "Bench Press",
-      type: "Resistance",
-      weight: 185,
-      sets: 4,
-      reps: 8,
-      duration: 30,
-      distance: 0,
-      user: user._id,
-    });
+    await Exercise.create([
+      {
+        exerciseType: 'Running',
+        exerciseTime: 30,
+        user: users[0]._id,
+      },
+      {
+        exerciseType: 'Walking',
+        exerciseTime: 45,
+        user: users[0]._id,
+      },
+      {
+        exerciseType: 'Calisthenics',
+        exerciseTime: 60,
+        user: users[1]._id,
+      },
+      {
+        exerciseType: 'Weight Lifting',
+        exerciseTime: 45,
+        user: users[1]._id,
+      },
+      {
+        exerciseType: 'Yoga',
+        exerciseTime: 60,
+        user: users[2]._id,
+      },
+      {
+        exerciseType: 'Walking',
+        exerciseTime: 30,
+        user: users[2]._id,
+      },
+    ]);
 
-    await Exercise.create({
-      name: "Treadmill",
-      type: "Cardio",
-      weight: 0,
-      sets: 0,
-      reps: 0,
-      duration: 30,
-      distance: 2,
-      user: user._id,
-    });
-
-    console.log("Exercise seeded");
+    console.log('Exercises seeded');
 
     process.exit(0);
   } catch (err) {
-    throw err;
+    console.error(err);
+    process.exit(1);
   }
-}
-);
+});

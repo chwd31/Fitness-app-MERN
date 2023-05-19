@@ -1,26 +1,18 @@
 import React, { useState, useEffect } from "react";
+import { useQuery } from '@apollo/client';
+import { GET_EXERCISES } from '../schema/resolvers';
 
 const WeeklyStatsPage = () => {
+    const { loading, error, data } = useQuery(GET_EXERCISES);
     const [weeklyWorkouts, setWeeklyWorkouts] = useState([]);   
     const [totalWorkouts, setTotalWorkouts] = useState(0);  
     const [totalExerciseTime, setTotalExerciseTime] = useState(0);
 
     useEffect(() => {
-        const fetchWorkouts = async () => {
-            try {
-            const response = await fetch('/api/workouts');
-            if (response.ok) {
-                const data = await response.json();
-                setWeeklyWorkouts(data);
-            } else {
-                console.log('Error occurred fetching workouts', response.status);
-            }
-        } catch (error) {
-            console.log('Error occurred fetching workouts', error);
-        }   
-        };
-        fetchWorkouts();
-    }, []);
+        if (!loading && data && data.exercises) {
+            setWeeklyWorkouts(data.exercises);
+        }
+    }, [loading, data]);
 
     useEffect(() => {
         const calculateTotals = () => {
@@ -28,8 +20,8 @@ const WeeklyStatsPage = () => {
             let totalExerciseTime = 0;
 
             weeklyWorkouts.forEach((workout) => {
-                totalWorkouts += workout.count;
-                totalExerciseTime += workout.minutes;
+                totalWorkouts += 1;
+                totalExerciseTime += workout.exerciseTime;
             });
 
             setTotalWorkouts(totalWorkouts);
@@ -37,6 +29,9 @@ const WeeklyStatsPage = () => {
         };
         calculateTotals();
     }, [weeklyWorkouts]);
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error occurred while fetching weekly stats</p>;
 
     return (
         <div>
@@ -51,19 +46,18 @@ const WeeklyStatsPage = () => {
                 </thead>
                 <tbody>
                     {weeklyWorkouts.map((workout) => (
-                        <tr key={workout.id}>
-                            <td>{workout.exercise}</td>
-                            <td>{workout.count}</td>
-                            <td>{workout.minutes}</td>
+                        <tr key={workout._id}>
+                            <td>{workout.exerciseType}</td>
+                            <td>{workout.exerciseTime}</td>
+                            <td>{workout.exerciseDate}</td>
                         </tr>
                     ))}
                 </tbody>
-                </table>
-                <p>Total Workouts: {totalWorkouts}</p>  
-                <p>Total Exercise Time: {totalExerciseTime}</p> 
+            </table>
+            <p>Total Workouts: {totalWorkouts}</p>  
+            <p>Total Exercise Time: {totalExerciseTime}</p> 
         </div>
     );
 };
 
 export default WeeklyStatsPage;
-

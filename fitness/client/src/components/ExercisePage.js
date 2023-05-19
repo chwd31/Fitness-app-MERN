@@ -1,11 +1,13 @@
-import e from 'express';
-import { set } from 'mongoose';
 import React, { useState } from 'react';
+import { useMutation } from '@apollo/client';
+import { ADD_EXERCISE } from '../schema/resolvers';
 
 const ExercisePage = () => {
     const [exerciseType, setExerciseType] = useState('');
     const [exerciseTime, setExerciseTime] = useState('');
     const [exerciseDate, setExerciseDate] = useState('');
+
+    const [addExercise] = useMutation(ADD_EXERCISE);
 
     const handleExerciseTypeChange = (event) => {
         setExerciseType(event.target.value);
@@ -19,34 +21,39 @@ const ExercisePage = () => {
         setExerciseDate(event.target.value);
     };
 
-    const handleSaveExercise = (event) => {
+    const handleSaveExercise = async (event) => {
         event.preventDefault();
-        alert(`Exercise Type: ${exerciseType} Exercise Time: ${exerciseTime} Exercise Date: ${exerciseDate}`);
-        setExerciseDate(currentDate.toISOString());
 
-        console.log('Exercise Type: ', exerciseType);
-        console.log('Exercise Time: ', exerciseTime);
-        console.log('Exercise Date: ', exerciseDate);
+        try {
+            const { data } = await addExercise({
+                variables: { name: exerciseType, duration: parseInt(exerciseTime), date: exerciseDate }
+            });
 
-        setExerciseType('');
-        setExerciseTime('');
+            if (data.addExercise) {
+                alert('Exercise Saved!');
+                setExerciseType('');
+                setExerciseTime('');
+                setExerciseDate('');
+            }
+        } catch (error) {
+            console.log('Error occurred saving exercise', error);
+        }
     };
 
-    
     return (
         <div>
-            <h1>Exercise Log</h1>   
+            <h1>Exercise Log</h1>
             <form>
                 <label>
                     Exercise Type:
                     <select value={exerciseType} onChange={handleExerciseTypeChange}>
-                        <option value = "">Select Exercise Type</option>
-                        <option value = "Running">Running</option>
-                        <option value = "Walking">Walking</option>
-                        <option value = "Calisthenics">Calisthenics</option>
-                        <option value = "Weight Lifting">Weight Lifting</option>
-                        <option value = "Yoga">Yoga</option>
-                        </select>
+                        <option value="">Select Exercise Type</option>
+                        <option value="Running">Running</option>
+                        <option value="Walking">Walking</option>
+                        <option value="Calisthenics">Calisthenics</option>
+                        <option value="Weight Lifting">Weight Lifting</option>
+                        <option value="Yoga">Yoga</option>
+                    </select>
                 </label>
                 <br />
                 <label>
@@ -62,3 +69,4 @@ const ExercisePage = () => {
     );
 };
 
+export default ExercisePage;

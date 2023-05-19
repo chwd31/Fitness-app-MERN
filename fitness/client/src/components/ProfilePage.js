@@ -1,11 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useQuery, useMutation } from '@apollo/client';
+import { GET_PROFILE, UPDATE_PROFILE } from '../schema/resolvers';
 
 const ProfilePage = () => {
+    const { loading, error, data } = useQuery(GET_PROFILE);
     const [name, setName] = useState('');
     const [age, setAge] = useState(''); 
     const [height, setHeight] = useState('');
     const [weight, setWeight] = useState('');
     const [isEditing, setIsEditing] = useState(false);
+
+    const [updateProfile] = useMutation(UPDATE_PROFILE);
+
+    useEffect(() => {
+        if (!loading && data && data.me) {
+            const { name, age, height, weight } = data.me.profile;
+            setName(name);
+            setAge(age);
+            setHeight(height);
+            setWeight(weight);
+        }
+    }, [loading, data]);
 
     const handleNameChange = (event) => {
         setName(event.target.value);
@@ -27,21 +42,32 @@ const ProfilePage = () => {
         setIsEditing((prevIsEditing) => !prevIsEditing);
     };
 
-    const handleSaveProfile = (event) => {
+    const handleSaveProfile = async (event) => {
         event.preventDefault();
-        alert(`Name: ${name} Age: ${age} Height: ${height} Weight: ${weight}`);
-        setName('');
-        setAge('');
-        setHeight('');
-        setWeight('');
-        setIsEditing(false);
+
+        try {
+            const { data } = await updateProfile({
+                variables: {
+                    input: { name, age, height, weight }
+                }
+            });
+
+            if (data.updateProfile) {
+                setIsEditing(false);
+            }
+        } catch (error) {
+            console.log('Error occurred saving profile', error);
+        }
     };
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error occurred while fetching profile data</p>;
 
     return (
         <div>
             <h2>Profile</h2>
             {isEditing ? (
-                <form>
+                <form onSubmit={handleSaveProfile}>
                     <label>
                         Name:
                         <input type="text" value={name} onChange={handleNameChange} />  
@@ -62,7 +88,7 @@ const ProfilePage = () => {
                         <input type="number" value={weight} onChange={handleWeightChange} />
                     </label>
                     <br />
-                    <button type="submit" onClick={handleSaveProfile}>  
+                    <button type="submit">  
                         Save Profile
                     </button>
                 </form>
@@ -80,10 +106,3 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
-
-
-
-
-
-
-

@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
+import { useMutation } from '@apollo/client';
+import { LOGIN } from '../schema/resolvers';
 
-const LoginPage = ({ isLoggedIn, onLogin }) => {
+const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [login, { error }] = useMutation(LOGIN);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -12,32 +16,23 @@ const LoginPage = ({ isLoggedIn, onLogin }) => {
     setPassword(event.target.value);
   };
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
-    alert(`Email: ${email} Password: ${password}`);
-    setEmail('');
-    setPassword('');
-
-    try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+  const handleLogin = () => {
+    login({
+      variables: {
+        input: {
+          email,
+          password,
         },
-        body: JSON.stringify({ email, password }),
+      },
+    })
+      .then((response) => {
+        const { token } = response.data.login;
+        localStorage.setItem('token', token);
+        onLogin();
+      })
+      .catch((error) => {
+        console.error('Error occurred logging in:', error);
       });
-
-      if (response.ok) {
-        const userData = await response.json();
-        console.log('User Data', userData);
-      } else {
-        console.log('Error occurred logging in', response.status);
-      }
-    } catch (error) {
-      console.log('Error occurred logging in', error);
-    }
-
-    onLogin();
   };
 
   return (
@@ -54,17 +49,13 @@ const LoginPage = ({ isLoggedIn, onLogin }) => {
           <input type="password" value={password} onChange={handlePasswordChange} />
         </label>
         <br />
-        <button type="submit" onClick={handleLogin}>
+        <button type="button" onClick={handleLogin}>
           Login
         </button>
       </form>
+      {error && <p>Error occurred while logging in: {error.message}</p>}
     </div>
   );
 };
 
 export default LoginPage;
-
-
-
-
-
