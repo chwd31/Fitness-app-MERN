@@ -74,6 +74,18 @@ const typeDefs = gql`
     login(input: LoginInput!): Auth
     addExercise(input: ExerciseInput!): Exercise
     addWeeklyStats(input: WeeklyStatsInput!): WeeklyStats
+    processPayment(input: ProcessPaymentInput!): ProcessPaymentResponse!
+  }
+
+  input ProcessPaymentInput {
+    amount: Float!
+    paymentMethodId: String!
+  }
+
+  type ProcessPaymentResponse {
+    success: Boolean!
+    error: String
+    clientSecret: String
   }
 `;
 
