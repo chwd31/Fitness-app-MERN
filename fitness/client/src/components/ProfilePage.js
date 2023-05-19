@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation } from '@apollo/client';
-import { GET_PROFILE, UPDATE_PROFILE } from '../queries';
+import { GET_PROFILE, UPDATE_PROFILE } from '../schema/resolvers';
 
 const ProfilePage = () => {
     const { loading, error, data } = useQuery(GET_PROFILE);

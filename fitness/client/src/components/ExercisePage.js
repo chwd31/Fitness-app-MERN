@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { ADD_EXERCISE } from '../mutations';
+import { ADD_EXERCISE } from '../schema/resolvers';
 
 const ExercisePage = () => {
     const [exerciseType, setExerciseType] = useState('');

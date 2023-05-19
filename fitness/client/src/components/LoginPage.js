@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { LOGIN } from '../mutations';
+import { LOGIN } from '../schema/resolvers';
 
 const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState('');
