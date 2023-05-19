@@ -32,11 +32,16 @@ const typeDefs = gql`
         exercise(_id: ID!): Exercise
     }
 
+
+    type Query {
+        getUsers: [User]
+        getExercises(username: String): [Exercise]
+    }
     type Mutation {
         addUser(username: String!, password: String!, email: String!): Auth
-        login(username: String!, password: String!): Auth
-        addExercise(name: String!, type: String!, weight: Int!, sets: Int!, reps: Int!, duration: Int!, distance: Int!): Exercise
+        addExercise(name: String!, weight: Int!, sets: Int!, reps: Int!, duration: Int!, distance: Int!): Exercise
         removeExercise(_id: ID!): Exercise
+        login(username: String!, password: String!): Auth
     }
 `;
 

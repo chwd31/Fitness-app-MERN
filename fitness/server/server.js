@@ -11,7 +11,7 @@ const server = new ApolloServer({
     resolvers,
     // context: //authMiddleware,
 });
-server.applyMiddleware({ app });
+// server.applyMiddleware({ app });
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 if (process.env.NODE_ENV === "production") {
@@ -23,7 +23,7 @@ app.get("*", (req, res) => {
 );
 const startApolloServer = async () => {
     await server.start();
-    await server.listen(PORT);
+    // await server.listen(PORT);
     console.log(`Server is running on port ${PORT}`);
 };
 
