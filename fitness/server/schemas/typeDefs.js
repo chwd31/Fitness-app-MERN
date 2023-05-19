@@ -31,7 +31,11 @@ const typeDefs = gql`
         user(username: String!): User
         exercises: [Exercise]
         exercise(_id: ID!): Exercise
+        getExercises(username: String): [Exercise]
+        getUsers: [User]
     }
+
+
 
     type Mutation {
         addUser(username: String!, password: String!, email: String!): Auth
@@ -40,3 +44,5 @@ const typeDefs = gql`
         removeExercise(_id: ID!): Exercise
     }
 `;
+
+module.exports = typeDefs;
