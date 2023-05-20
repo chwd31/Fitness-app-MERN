@@ -4,7 +4,7 @@
   "description": "backend data",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "nodemon server.js",
     "seed": "node seeds/seed.js"
   },
   "repository": {
@@ -23,6 +23,7 @@
     "mongoose": "^7.1.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.14",
+    "concurrently": "^6.2.0"
   }
 }
