@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";  
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Change 1: Import Routes instead of Switch
 import HomePage from "./components/HomePage";
 import ExercisePage from "./components/ExercisePage";
 import ProfilePage from "./components/ProfilePage";
@@ -10,7 +10,7 @@ import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 
 const App = () => {
-  const[isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -20,34 +20,21 @@ const App = () => {
     setIsLoggedIn(false);
   };
 
-
   return (
     <Router>
       <NavBar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
-      <Switch>
-        <Route exact path="/">
-          <HomePage isLoggedIn={isLoggedIn} onLogin={handleLogin}/>
-        </Route>
-        <Route path="/login">
-          <LoginPage isLoggedIn={isLoggedIn} onLogin={handleLogin}/>  
-        </Route>
-        <Route path="/signup">
-          <SignupPage isLoggedIn={isLoggedIn} onLogin={handleLogin}/>
-        </Route>
-        {isLoggedIn && (  
+      <Routes> {/* Change 2: Replace Switch with Routes */}
+        <Route path="/" element={<HomePage isLoggedIn={isLoggedIn} onLogin={handleLogin} />} /> {/* Change 3: Use element prop */}
+        <Route path="/login" element={<LoginPage isLoggedIn={isLoggedIn} onLogin={handleLogin} />} /> {/* Change 3: Use element prop */}
+        <Route path="/signup" element={<SignupPage isLoggedIn={isLoggedIn} onLogin={handleLogin} />} /> {/* Change 3: Use element prop */}
+        {isLoggedIn && (
           <>
-            <Route path="/exercise">
-              <ExercisePage />
-            </Route>
-            <Route path="/profile">
-              <ProfilePage />
-            </Route>
-            <Route path="/weeklystats"> 
-            <WeeklyStatsPage />
-            </Route>    
+            <Route path="/exercise" element={<ExercisePage />} /> {/* Change 3: Use element prop */}
+            <Route path="/profile" element={<ProfilePage />} /> {/* Change 3: Use element prop */}
+            <Route path="/weeklystats" element={<WeeklyStatsPage />} /> {/* Change 3: Use element prop */}
           </>
         )}
-      </Switch>
+      </Routes> {/* Change 2: Close Routes */}
       <Footer />
     </Router>
   );

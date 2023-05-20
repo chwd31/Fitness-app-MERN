@@ -1,48 +1,87 @@
 const { gql } = require('apollo-server-express');
 
 const typeDefs = gql`
-    type User {
-        _id: ID
-        username: String
-        password: String
-        email: String
-        exercises: [Exercise]
-    }
+  type User {
+    _id: ID
+    username: String
+    email: String
+    exercises: [Exercise]
+    profile: Profile
+  }
 
-    type Exercise {
-        _id: ID
-        name: String
-        type: String
-        weight: Int
-        sets: Int
-        reps: Int
-        duration: Int
-        distance: Int
-    }
+  type Profile {
+    _id: ID
+    name: String
+    age: Int
+    height: Int
+    weight: Int
+  }
 
-    type Auth {
-        token: ID!
-        user: User
-    }
+  type Exercise {
+    _id: ID
+    name: String
+    description: String
+  }
 
-    type Query {
-        me: User
-        users: [User]
-        user(username: String!): User
-        exercises: [Exercise]
-        exercise(_id: ID!): Exercise
-        getExercises(username: String): [Exercise]
-        getUsers: [User]
-    }
+  type WeeklyStats {
+    _id: ID
+    date: String
+    weight: Float
+    calories: Int
+  }
 
+  type Auth {
+    token: ID!
+    user: User
+  }
 
+  type PaymentResult {
+    success: Boolean!
+    paymentIntentId: String
+    clientSecret: String
+    error: String
+  }
 
-    type Mutation {
-        addUser(username: String!, password: String!, email: String!): Auth
-        login(username: String!, password: String!): Auth
-        addExercise(name: String!, type: String!, weight: Int!, sets: Int!, reps: Int!, duration: Int!, distance: Int!): Exercise
-        removeExercise(_id: ID!): Exercise
-    }
+  input SignupInput {
+    username: String!
+    email: String!
+    password: String!
+  }
+
+  input LoginInput {
+    email: String!
+    password: String!
+  }
+
+  input ExerciseInput {
+    name: String!
+    description: String!
+  }
+
+  input WeeklyStatsInput {
+    date: String!
+    weight: Float!
+    calories: Int!
+  }
+
+  input PaymentInput {
+    amount: Int!
+    paymentMethodId: String!
+  }
+
+  type Query {
+    me: User
+    exercises: [Exercise]
+    weeklyStats: [WeeklyStats]
+  }
+
+  type Mutation {
+    signup(input: SignupInput): Auth
+    login(input: LoginInput): Auth
+    addExercise(input: ExerciseInput): Exercise
+    addWeeklyStats(input: WeeklyStatsInput): WeeklyStats
+    processPayment(input: PaymentInput): PaymentResult
+  }
 `;
 
 module.exports = typeDefs;

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const NavBar = ({ isLoggedIn, handleLogout }) => {
-    const handleLogout = () => {
+    const handleLogoutClick = () => {
         // Clear token from local storage or cookies
         handleLogout();
     };
@@ -15,7 +15,7 @@ const NavBar = ({ isLoggedIn, handleLogout }) => {
                     <Link to="/exercise">Exercise</Link>
                     <Link to="/profile">Profile</Link>
                     <Link to="/weeklystats">Weekly Stats</Link>
-                    <button onClick={handleLogout}>Logout</button>
+                    <button onClick={handleLogoutClick}>Logout</button>
                 </>
             ) : (
                 <>
