@@ -1,7 +1,7 @@
 import React from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { useMutation } from '@apollo/client';
-import { PROCESS_PAYMENT } from '../schema/resolvers';
+import { PROCESS_PAYMENT } from '../server/schema/resolvers'; 
 
 const Footer = () => {
     const stripe = useStripe();

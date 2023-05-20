@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation } from '@apollo/client';
-import { GET_PROFILE, UPDATE_PROFILE } from '../schema/resolvers';
+import { GET_PROFILE, UPDATE_PROFILE } from '../server/schema/resolvers';
 
 const ProfilePage = () => {
     const { loading, error, data } = useQuery(GET_PROFILE);
@@ -44,14 +44,14 @@ const ProfilePage = () => {
 
     const handleSaveProfile = async (event) => {
         event.preventDefault();
-
+    
         try {
             const { data } = await updateProfile({
                 variables: {
                     input: { name, age, height, weight }
                 }
             });
-
+    
             if (data.updateProfile) {
                 setIsEditing(false);
             }
@@ -59,6 +59,7 @@ const ProfilePage = () => {
             console.log('Error occurred saving profile', error);
         }
     };
+    
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error occurred while fetching profile data</p>;

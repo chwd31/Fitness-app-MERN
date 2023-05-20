@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from '@apollo/client';
-import { GET_EXERCISES } from '../schema/resolvers';
+import { GET_EXERCISES } from '../server/schema/resolvers';
 
 const WeeklyStatsPage = () => {
     const { loading, error, data } = useQuery(GET_EXERCISES);
