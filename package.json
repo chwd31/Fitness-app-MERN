@@ -1,0 +1,20 @@
+{
+  "name": "fitness",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "client": "cd client && npm start",
+    "server": "cd server && npm start",
+    "start": "concurrently \"npm run client\" \"npm run server\"",
+    "build": "cd client && npm run build"
+  },
+  "dependencies": {
+    "browserify-zlib": "^0.2.0",
+    "concurrently": "^8.0.1",
+    "crypto-browserify": "^3.12.0",
+    "net": "^1.0.2",
+    "os-browserify": "^0.3.0",
+    "stream-http": "^3.2.0",
+    "util": "^0.12.5"
+  }
+}
