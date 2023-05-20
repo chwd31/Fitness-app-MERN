@@ -1,6 +1,30 @@
 import React, { useState } from 'react';
-import { useMutation } from '@apollo/client';
-import { signup } from '../schemas/resolvers';
+import { useMutation, gql } from '@apollo/client';
+
+const SIGNUP_MUTATION = gql`
+  mutation Signup($input: SignupInput) {
+    signup(input: $input) {
+      token
+      user {
+        _id
+        username
+        email
+        exercises {
+          _id
+          name
+          description
+        }
+        profile {
+          _id
+          name
+          age
+          height
+          weight
+        }
+      }
+    }
+  }
+`;
 
 const SignupPage = () => {
   const [email, setEmail] = useState('');
@@ -11,7 +35,7 @@ const SignupPage = () => {
   const [height, setHeight] = useState('');
   const [signupSuccess, setSignupSuccess] = useState(false);
 
-  const [signup, { error }] = useMutation(SIGNUP);
+  const [signupMutation, { error }] = useMutation(SIGNUP_MUTATION);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -38,7 +62,7 @@ const SignupPage = () => {
   };
 
   const handleSignup = () => {
-    signup({
+    signupMutation({
       variables: {
         input: {
           email,
@@ -50,7 +74,8 @@ const SignupPage = () => {
         },
       },
     })
-      .then(() => {
+      .then((response) => {
+        const { token, user } = response.data.signup;
         setSignupSuccess(true);
         setEmail('');
         setPassword('');

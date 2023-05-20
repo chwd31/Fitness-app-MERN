@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
-import { useMutation } from '@apollo/client';
-import { login } from '../schemas/resolvers';
+import { useMutation, gql } from '@apollo/client';
 
 const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const LOGIN = gql`
+    mutation Login($email: String!, $password: String!) {
+      login(email: $email, password: $password) {
+        token
+      }
+    }
+  `;
 
   const [login, { error }] = useMutation(LOGIN);
 
@@ -19,10 +26,8 @@ const LoginPage = ({ onLogin }) => {
   const handleLogin = () => {
     login({
       variables: {
-        input: {
-          email,
-          password,
-        },
+        email,
+        password,
       },
     })
       .then((response) => {
