@@ -1,5 +1,5 @@
 const db = require('../config/connection');
-const { User, Exercise } = require('../models');
+const { User, Exercise, Profile } = require('../models');
 
 db.once('open', async () => {
   try {
@@ -25,6 +25,32 @@ db.once('open', async () => {
     ]);
 
     console.log('Users seeded');
+
+    const profiles = await Profile.create([
+      {
+        name: 'John Doe',
+        age: 25,
+        height: 180,
+        weight: 75,
+        user: users[0]._id,
+      },
+      {
+        name: 'Jane Smith',
+        age: 30,
+        height: 165,
+        weight: 60,
+        user: users[1]._id,
+      },
+      {
+        name: 'Mike Johnson',
+        age: 35,
+        height: 175,
+        weight: 80,
+        user: users[2]._id,
+      },
+    ]);
+
+    console.log('Profiles seeded');
 
     await Exercise.create([
       {
