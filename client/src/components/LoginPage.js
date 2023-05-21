@@ -24,6 +24,9 @@ const LoginPage = ({ onLogin }) => {
   };
 
   const handleLogin = () => {
+    console.log('Email:', email);
+    console.log('Password:', password);
+  
     login({
       variables: {
         email,
@@ -31,6 +34,7 @@ const LoginPage = ({ onLogin }) => {
       },
     })
       .then((response) => {
+        console.log('Login response:', response);
         const { token } = response.data.login;
         localStorage.setItem('token', token);
         onLogin();
@@ -39,7 +43,7 @@ const LoginPage = ({ onLogin }) => {
         console.error('Error occurred logging in:', error);
       });
   };
-
+  
   return (
     <div>
       <h2>Login</h2>
