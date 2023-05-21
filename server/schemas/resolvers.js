@@ -29,6 +29,8 @@ const resolvers = {
     },
     login: async (_, { input }) => {
       const { email, password } = input;
+      console.log('Email', email);
+      console.log('Password', password);
       const user = await User.findOne({ email });
 
       if (!user || !user.verifyPassword(password)) {
