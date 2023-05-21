@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
-  username: {
+  email: {
     type: String,
     required: true,
     unique: true,
@@ -10,11 +10,6 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
   },
   exercises: [
     {
@@ -26,6 +21,8 @@ const userSchema = new mongoose.Schema({
 
 // Method to verify password
 userSchema.methods.verifyPassword = function (password) {
+  console.log('Provided password', password);
+  console.log('Stored hashed password', this.password);
   return bcrypt.compareSync(password, this.password);
 };
 
