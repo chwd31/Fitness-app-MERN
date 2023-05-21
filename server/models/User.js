@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -22,6 +23,11 @@ const userSchema = new mongoose.Schema({
     },
   ],
 });
+
+// Method to verify password
+userSchema.methods.verifyPassword = function (password) {
+  return bcrypt.compareSync(password, this.password);
+};
 
 const User = mongoose.model('User', userSchema);
 
