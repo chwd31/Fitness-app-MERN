@@ -1,5 +1,5 @@
 const { AuthenticationError } = require('apollo-server-express');
-const { signToken } = require('../utils/auth');
+const { generateToken } = require('../utils/auth');
 const { User, Exercise, WeeklyStats } = require('../models');
 const stripe = require('stripe')('sk_test_51N9GI3HfMu1TGSRki70Om2NBeMHPhtiFJFDJGyMsVMBxNt0S3Px5kstlls10XPd3C0Q8wzGmLRodYWQa4vcHZ17y00AT3Mogxj');
 
@@ -24,7 +24,7 @@ const resolvers = {
   Mutation: {
     signup: async (_, { input }) => {
       const user = await User.create(input);
-      const token = signToken(user);
+      const token = generateToken(user);
       return { token, user };
     },
     login: async (_, { input }) => {
@@ -37,7 +37,7 @@ const resolvers = {
         throw new AuthenticationError('Invalid email or password');
       }
 
-      const token = signToken(user);
+      const token = generateToken(user);
       return { token, user };
     },
     addExercise: async (_, { input }, context) => {
