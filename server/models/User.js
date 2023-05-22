@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
       ref: 'Exercise',
     },
   ],
+profile: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'Profile',
+},
 });
 
 // Method to verify password
