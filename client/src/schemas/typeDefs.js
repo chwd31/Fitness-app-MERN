@@ -3,7 +3,6 @@ import { gql } from '@apollo/client';
 const typeDefs = gql`
   type User {
     _id: ID
-    username: String
     email: String
     exercises: [Exercise]
     profile: Profile
@@ -43,7 +42,6 @@ const typeDefs = gql`
   }
 
   input SignupInput {
-    username: String!
     email: String!
     password: String!
   }

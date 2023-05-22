@@ -18,13 +18,17 @@ const Footer = () => {
   const elements = useElements();
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
+  const [showPaymentForm, setShowPaymentForm] = useState(false); // State variable to track form visibility
 
   const [processPayment, { error }] = useMutation(PROCESS_PAYMENT);
 
-  const handleContribute = async (event) => {
+  const handleContribute = () => {
+    setShowPaymentForm(true); // Show payment form on button click
+  };
+
+  const handlePaymentSubmit = async (event) => {
     event.preventDefault();
 
-    // Use Stripe Elements to get a paymentMethodId
     const { error, paymentMethod } = await stripe.createPaymentMethod({
       type: 'card',
       card: elements.getElement(CardElement),
@@ -39,25 +43,19 @@ const Footer = () => {
         paymentMethodId: paymentMethod.id,
       };
 
-      // Call the processPayment mutation
       processPayment({ variables: { input } })
         .then((response) => {
-          // Handle the response from the server
           const { success, paymentIntentId, clientSecret, error } = response.data.processPayment;
           if (success) {
-            // Payment succeeded, handle further actions
             console.log('Payment succeeded!');
           } else {
-            // Payment failed, handle error
             console.error('Payment failed:', error);
           }
         })
         .catch((error) => {
-          // Handle errors occurred during the mutation
           console.error('Error occurred during payment:', error);
         });
     } else {
-      // Handle the error from Stripe Elements
       console.error('Error:', error);
     }
   };
@@ -69,21 +67,23 @@ const Footer = () => {
         Please contribute to this project by clicking&nbsp;
         <button onClick={handleContribute}>Here</button>
       </p>
-      <form onSubmit={handleContribute}>
-        <label>
-          Name:
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-        </label>
-        <br />
-        <label>
-          Amount:
-          <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
-        </label>
-        <br />
-        <CardElement />
-        <br />
-        <button type="submit">Contribute</button>
-      </form>
+      {showPaymentForm && (
+        <form onSubmit={handlePaymentSubmit}>
+          <label>
+            Name:
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+          </label>
+          <br />
+          <label>
+            Amount:
+            <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
+          </label>
+          <br />
+          <CardElement />
+          <br />
+          <button type="submit">Contribute</button>
+        </form>
+      )}
       {error && <p>Error occurred during payment: {error.message}</p>}
     </footer>
   );

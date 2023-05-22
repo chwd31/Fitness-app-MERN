@@ -8,17 +8,14 @@ db.once('open', async () => {
 
     const users = await User.create([
       {
-        username: 'JohnDoe',
         password: 'password1',
         email: 'johndoe@example.com',
       },
       {
-        username: 'JaneSmith',
         password: 'password2',
         email: 'janesmith@example.com',
       },
       {
-        username: 'MikeJohnson',
         password: 'password3',
         email: 'mikejohnson@example.com',
       },
