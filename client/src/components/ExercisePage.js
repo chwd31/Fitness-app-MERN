@@ -1,11 +1,21 @@
 import React, { useState } from 'react';
-import { useMutation } from '@apollo/client';
-import { addExercise } from '../schemas/typeDefs';
+import { useMutation, gql } from '@apollo/client';
 
 const ExercisePage = () => {
   const [exerciseType, setExerciseType] = useState('');
   const [exerciseTime, setExerciseTime] = useState('');
   const [exerciseDate, setExerciseDate] = useState('');
+
+  const ADD_EXERCISE = gql`
+    mutation AddExercise($input: ExerciseInput!) {
+      addExercise(input: $input) {
+        _id
+        name
+        description
+        date
+      }
+    }
+  `;
 
   const [addExercise] = useMutation(ADD_EXERCISE);
 
@@ -26,7 +36,7 @@ const ExercisePage = () => {
 
     try {
       const { data } = await addExercise({
-        variables: { input: { name: exerciseType, description: exerciseTime } }, // Update variables
+        variables: { input: { name: exerciseType, description: exerciseTime, date: exerciseDate } },
       });
 
       if (data.addExercise) {
@@ -59,6 +69,11 @@ const ExercisePage = () => {
         <label>
           Exercise Time (in minutes):
           <input type="text" value={exerciseTime} onChange={handleExerciseTimeChange} />
+        </label>
+        <br />
+        <label>
+          Date:
+          <input type="date" value={exerciseDate} onChange={handleExerciseDateChange} />
         </label>
         <br />
         <button type="submit" onClick={handleSaveExercise}>

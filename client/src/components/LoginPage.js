@@ -6,12 +6,13 @@ const LoginPage = ({ onLogin }) => {
   const [password, setPassword] = useState('');
 
   const LOGIN = gql`
-    mutation Login($email: String!, $password: String!) {
-      login(email: $email, password: $password) {
-        token
-      }
+  mutation Login($input: LoginInput!) {
+    login(input: $input) {
+      token
     }
-  `;
+  }
+`;
+
 
   const [login, { error }] = useMutation(LOGIN);
 
@@ -29,15 +30,17 @@ const LoginPage = ({ onLogin }) => {
   
     login({
       variables: {
+        input: {
         email,
         password,
+        },
       },
     })
       .then((response) => {
         console.log('Login response:', response);
         const { token } = response.data.login;
         localStorage.setItem('token', token);
-        onLogin();
+        onLogin(user);
       })
       .catch((error) => {
         console.error('Error occurred logging in:', error);

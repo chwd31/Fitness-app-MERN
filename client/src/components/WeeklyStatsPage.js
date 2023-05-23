@@ -1,63 +1,53 @@
-import React, { useState, useEffect } from "react";
-import { useQuery } from '@apollo/client';
-import { getExercises } from '../schemas/resolvers';
+import React from "react";
+import { useQuery, gql } from '@apollo/client';
+
+const GET_WEEKLY_STATS = gql`
+  query GetWeeklyStats {
+    weeklyStats {
+      weekStartDate
+      exerciseCounts {
+        exerciseType
+        count
+      }
+      totalExerciseTime
+    }
+  }
+`;
 
 const WeeklyStatsPage = () => {
-    const { loading, error, data } = useQuery(GET_EXERCISES);
-    const [weeklyWorkouts, setWeeklyWorkouts] = useState([]);   
-    const [totalWorkouts, setTotalWorkouts] = useState(0);  
-    const [totalExerciseTime, setTotalExerciseTime] = useState(0);
+  const { loading, error, data } = useQuery(GET_WEEKLY_STATS);
 
-    useEffect(() => {
-        if (!loading && data && data.exercises) {
-            setWeeklyWorkouts(data.exercises);
-        }
-    }, [loading, data]);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error occurred while fetching weekly stats</p>;
 
-    useEffect(() => {
-        const calculateTotals = () => {
-            let totalWorkouts = 0;
-            let totalExerciseTime = 0;
+  const { weekStartDate, exerciseCounts, totalExerciseTime } = data.weeklyStats;
 
-            weeklyWorkouts.forEach((workout) => {
-                totalWorkouts += 1;
-                totalExerciseTime += workout.exerciseTime;
-            });
+  return (
+    <div>
+      <h2>Weekly Stats</h2>
+      <p>Week Start Date: {weekStartDate}</p>
 
-            setTotalWorkouts(totalWorkouts);
-            setTotalExerciseTime(totalExerciseTime);
-        };
-        calculateTotals();
-    }, [weeklyWorkouts]);
+      <h3>Exercise Counts</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Exercise Type</th>
+            <th>Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          {exerciseCounts.map(({ exerciseType, count }) => (
+            <tr key={exerciseType}>
+              <td>{exerciseType}</td>
+              <td>{count}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error occurred while fetching weekly stats</p>;
-
-    return (
-        <div>
-            <h2>Weekly Stats</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Exercise Type</th>
-                        <th>Exercise Time</th>
-                        <th>minutes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {weeklyWorkouts.map((workout) => (
-                        <tr key={workout._id}>
-                            <td>{workout.exerciseType}</td>
-                            <td>{workout.exerciseTime}</td>
-                            <td>{workout.exerciseDate}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            <p>Total Workouts: {totalWorkouts}</p>  
-            <p>Total Exercise Time: {totalExerciseTime}</p> 
-        </div>
-    );
+      <p>Total Exercise Time: {totalExerciseTime} minutes</p>
+    </div>
+  );
 };
 
 export default WeeklyStatsPage;
