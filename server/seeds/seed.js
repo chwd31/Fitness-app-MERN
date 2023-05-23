@@ -1,5 +1,6 @@
 const db = require('../config/connection');
 const { User, Exercise, Profile } = require('../models');
+const bcrypt = require('bcrypt');
 
 db.once('open', async () => {
   try {
@@ -8,15 +9,15 @@ db.once('open', async () => {
 
     const users = await User.create([
       {
-        password: 'password1',
+        password: bcrypt.hashSync('password1', 10),
         email: 'johndoe@example.com',
       },
       {
-        password: 'password2',
+        password: bcrypt.hashSync('password2', 10),
         email: 'janesmith@example.com',
       },
       {
-        password: 'password3',
+        password: bcrypt.hashSync('password3', 10),
         email: 'mikejohnson@example.com',
       },
     ]);
