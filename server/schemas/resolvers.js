@@ -17,8 +17,29 @@ const resolvers = {
       return exercises;
     },
     weeklyStats: async () => {
-      const stats = await WeeklyStats.find();
-      return stats;
+      const weeklyStats = await WeeklyStats.findOne();
+      const transformedStats = {
+        weekStartDate: weeklyStats.weekStartDate,
+        exerciseCounts: [],
+        totalExerciseTime: 0,
+      };
+
+      const exerciseCounts = {};
+      weeklyStats.exercises.forEach((exercise) => {
+        if (exerciseCounts[exercise.exerciseType]) {
+          exerciseCounts[exercise.exerciseType]++;
+        } else {
+          exerciseCounts[exercise.exerciseType] = 1;
+        }
+        transformedStats.totalExerciseTime += exercise.exerciseTime;
+      });
+
+      transformedStats.exerciseCounts = Object.entries(exerciseCounts).map(([exerciseType, count]) => ({
+        exerciseType,
+        count,
+      }));
+
+      return transformedStats;
     },
   },
   Mutation: {
@@ -45,9 +66,18 @@ const resolvers = {
         throw new AuthenticationError('Not logged in');
       }
 
-      const exercise = await Exercise.create(input);
+      const { name, description, date } = input;
+
+      const exercise = await Exercise.create({ name, description, date });
 
       await User.findByIdAndUpdate(context.user._id, { $push: { exercises: exercise._id } });
+
+      // Update the weekly stats by adding the exercise to the current week's data
+      const weeklyStats = await WeeklyStats.findOne();
+
+      weeklyStats.exercises.push(exercise);
+
+      await weeklyStats.save();
 
       return exercise;
     },
