@@ -8,6 +8,10 @@
     "start": "concurrently \"npm run client\" \"npm run server\"",
     "build": "cd client && npm run build"
   },
+  "engines": {
+    "node": "18.14.0",
+    "npm": "9.3.1"
+  },
   "dependencies": {
     "browserify-zlib": "^0.2.0",
     "concurrently": "^8.0.1",
