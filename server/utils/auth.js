@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const { AuthenticationError } = require('apollo-server-express');
 const { User } = require('../models');
 
-// Get the secret key from the environment variable
+// Get the secret key from the environment    variable
 const secretKey = process.env.JWT_SECRET_KEY;
 
 // Generates a JWT token
