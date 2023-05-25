@@ -1,4 +1,5 @@
 const { AuthenticationError } = require('apollo-server-express');
+const { authenticateUser } = require('../utils/auth');
 const { generateToken } = require('../utils/auth');
 const { User, Exercise, WeeklyStats } = require('../models');
 const stripe = require('stripe')('sk_test_51N9GI3HfMu1TGSRki70Om2NBeMHPhtiFJFDJGyMsVMBxNt0S3Px5kstlls10XPd3C0Q8wzGmLRodYWQa4vcHZ17y00AT3Mogxj');
@@ -16,30 +17,19 @@ const resolvers = {
       const exercises = await Exercise.find();
       return exercises;
     },
-    weeklyStats: async () => {
-      const weeklyStats = await WeeklyStats.findOne();
-      const transformedStats = {
-        weekStartDate: weeklyStats.weekStartDate,
-        exerciseCounts: [],
-        totalExerciseTime: 0,
-      };
-
-      const exerciseCounts = {};
-      weeklyStats.exercises.forEach((exercise) => {
-        if (exerciseCounts[exercise.exerciseType]) {
-          exerciseCounts[exercise.exerciseType]++;
-        } else {
-          exerciseCounts[exercise.exerciseType] = 1;
-        }
-        transformedStats.totalExerciseTime += exercise.exerciseTime;
-      });
-
-      transformedStats.exerciseCounts = Object.entries(exerciseCounts).map(([exerciseType, count]) => ({
-        exerciseType,
-        count,
-      }));
-
-      return transformedStats;
+    exerciseCounts: async () => {
+      const exerciseCounts = await Exercise.aggregate([
+        { $group: { _id: '$exerciseType', count: { $sum: 1 } } },
+        { $project: { exerciseType: '$_id', count: 1, _id: 0 } },
+      ]);
+      return exerciseCounts;
+    },
+    totalExerciseTime: async () => {
+      const totalExerciseTime = await Exercise.aggregate([
+        { $group: { _id: null, total: { $sum: '$exerciseTime' } } },
+        { $project: { _id: 0, total: 1 } },
+      ]);
+      return totalExerciseTime[0]?.total || 0;
     },
   },
   Mutation: {
@@ -66,24 +56,13 @@ const resolvers = {
         throw new AuthenticationError('Not logged in');
       }
 
-      const { name, description, date } = input;
+      const { name, description } = input;
 
-      const exercise = await Exercise.create({ name, description, date });
+      const exercise = await Exercise.create({ name, description });
 
       await User.findByIdAndUpdate(context.user._id, { $push: { exercises: exercise._id } });
 
-      // Update the weekly stats by adding the exercise to the current week's data
-      const weeklyStats = await WeeklyStats.findOne();
-
-      weeklyStats.exercises.push(exercise);
-
-      await weeklyStats.save();
-
       return exercise;
-    },
-    addWeeklyStats: async (_, { input }) => {
-      const stats = await WeeklyStats.create(input);
-      return stats;
     },
     processPayment: async (_, { input }, context) => {
       if (!context.user) {

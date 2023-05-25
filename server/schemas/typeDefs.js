@@ -24,13 +24,9 @@ const typeDefs = gql`
     date: String
   }
 
-  type WeeklyStats {
-    _id: ID
-    user: User
-    date: String
+  type ExerciseCount {
     exerciseType: String
-    exerciseCount: Int
-    totalExerciseTime: Int
+    count: Int
   }
 
   type Auth {
@@ -59,14 +55,6 @@ const typeDefs = gql`
   input ExerciseInput {
     name: String!
     description: String!
-    date: String!
-  }
-
-  input WeeklyStatsInput {
-    date: String!
-    exerciseType: String!
-    exerciseCount: Int!
-    totalExerciseTime: Int!
   }
 
   input PaymentInput {
@@ -77,14 +65,14 @@ const typeDefs = gql`
   type Query {
     me: User
     exercises: [Exercise]
-    weeklyStats: [WeeklyStats]
+    exerciseCounts: [ExerciseCount]
+    totalExerciseTime: Int
   }
 
   type Mutation {
     signup(input: SignupInput): Auth
     login(input: LoginInput!): Auth
     addExercise(input: ExerciseInput): Exercise
-    addWeeklyStats(input: WeeklyStatsInput): WeeklyStats
     processPayment(input: PaymentInput): PaymentResult
   }
 `;

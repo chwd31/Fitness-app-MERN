@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import HomePage from './components/HomePage';
@@ -13,12 +13,22 @@ import Footer from './components/Footer';
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  useEffect(() => {
+    // Check if the user is already logged in
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   const handleLogin = () => {
     setIsLoggedIn(true);
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    // Clear the token from localStorage
+    localStorage.removeItem('token');
   };
 
   return (
@@ -26,29 +36,22 @@ const App = () => {
       <NavBar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
       <Switch>
         <Route exact path="/">
-          {isLoggedIn ? (
-            <>
-              <ExercisePage />
-              <ProfilePage />
-              <WeeklyStatsPage />
-            </>
-          ) : (
-            <HomePage />
-          )}
+          <HomePage />
+        </Route>
+        <Route path="/exercise">
+          {isLoggedIn ? <ExercisePage /> : <LoginPage onLogin={handleLogin} />}
+        </Route>
+        <Route path="/profile">
+          {isLoggedIn ? <ProfilePage /> : <LoginPage onLogin={handleLogin} />}
+        </Route>
+        <Route path="/weeklystats">
+          {isLoggedIn ? <WeeklyStatsPage /> : <LoginPage onLogin={handleLogin} />}
         </Route>
         <Route path="/login">
-          {isLoggedIn ? (
-            <ExercisePage />
-          ) : (
-            <LoginPage onLogin={handleLogin} />
-          )}
+          <LoginPage onLogin={handleLogin} />
         </Route>
         <Route path="/signup">
-          {isLoggedIn ? (
-            <ExercisePage />
-          ) : (
-            <SignupPage onLogin={handleLogin} />
-          )}
+          <SignupPage onLogin={handleLogin} />
         </Route>
       </Switch>
       <Footer />
