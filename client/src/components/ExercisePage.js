@@ -4,7 +4,6 @@ import { useMutation, gql } from '@apollo/client';
 const ExercisePage = () => {
   const [exerciseType, setExerciseType] = useState('');
   const [exerciseTime, setExerciseTime] = useState('');
-  const [exerciseDate, setExerciseDate] = useState('');
 
   const ADD_EXERCISE = gql`
     mutation AddExercise($input: ExerciseInput!) {
@@ -12,7 +11,6 @@ const ExercisePage = () => {
         _id
         name
         description
-        date
       }
     }
   `;
@@ -27,23 +25,27 @@ const ExercisePage = () => {
     setExerciseTime(event.target.value);
   };
 
-  const handleExerciseDateChange = (event) => {
-    setExerciseDate(event.target.value);
-  };
-
   const handleSaveExercise = async (event) => {
     event.preventDefault();
 
     try {
+      const token = localStorage.getItem('token');
+      console.log('Token', token);
+
+      if (!token) {
+        throw new Error('Not logged in');
+        console.log('error occurred saving exercise', error);
+      }
+
       const { data } = await addExercise({
-        variables: { input: { name: exerciseType, description: exerciseTime, date: exerciseDate } },
+        variables: { input: { name: exerciseType, description: exerciseTime } },
+        context: { headers: { authorization: `Bearer ${token}` } },
       });
 
       if (data.addExercise) {
         alert('Exercise Saved!');
         setExerciseType('');
         setExerciseTime('');
-        setExerciseDate('');
       }
     } catch (error) {
       console.log('Error occurred saving exercise', error);
@@ -69,11 +71,6 @@ const ExercisePage = () => {
         <label>
           Exercise Time (in minutes):
           <input type="text" value={exerciseTime} onChange={handleExerciseTimeChange} />
-        </label>
-        <br />
-        <label>
-          Date:
-          <input type="date" value={exerciseDate} onChange={handleExerciseDateChange} />
         </label>
         <br />
         <button type="submit" onClick={handleSaveExercise}>

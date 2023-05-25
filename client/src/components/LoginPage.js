@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
+import { useHistory } from 'react-router-dom';
 
-const LoginPage = ({ onLogin }) => {
+const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -14,6 +15,7 @@ const LoginPage = ({ onLogin }) => {
   `;
 
   const [login, { error }] = useMutation(LOGIN);
+  const history = useHistory();
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -35,7 +37,7 @@ const LoginPage = ({ onLogin }) => {
       .then((response) => {
         const { token } = response.data.login;
         localStorage.setItem('token', token);
-        onLogin(); // Call the onLogin function to update the state in the App component
+        history.push('/'); // Redirect to homepage after successful login
       })
       .catch((error) => {
         console.error('Error occurred logging in:', error);

@@ -1,31 +1,27 @@
 import React from "react";
 import { useQuery, gql } from '@apollo/client';
 
-const GET_WEEKLY_STATS = gql`
-  query GetWeeklyStats {
-    weeklyStats {
-      weekStartDate
-      exerciseCounts {
-        exerciseType
-        count
-      }
-      totalExerciseTime
+const GET_EXERCISE_COUNTS = gql`
+  query GetExerciseCounts {
+    exerciseCounts {
+      exerciseType
+      count
     }
+    totalExerciseTime
   }
 `;
 
 const WeeklyStatsPage = () => {
-  const { loading, error, data } = useQuery(GET_WEEKLY_STATS);
+  const { loading, error, data } = useQuery(GET_EXERCISE_COUNTS);
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error occurred while fetching weekly stats</p>;
+  if (error) return <p>Error occurred while fetching exercise counts</p>;
 
-  const { weekStartDate, exerciseCounts, totalExerciseTime } = data.weeklyStats;
+  const { exerciseCounts, totalExerciseTime } = data;
 
   return (
     <div>
       <h2>Weekly Stats</h2>
-      <p>Week Start Date: {weekStartDate}</p>
 
       <h3>Exercise Counts</h3>
       <table>
