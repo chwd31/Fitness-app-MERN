@@ -10,6 +10,9 @@
     "deploy": "gh-pages -d build",
     "build": "cd client && npm run build"
   },
+  "engines": {
+    "node": "18.x"
+  },  
   "dependencies": {
     "browserify-zlib": "^0.2.0",
     "concurrently": "^8.0.1",
